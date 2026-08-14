@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>☀️ 1분 여름향 테스트 | Remake_23</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;
+background:linear-gradient(180deg,#f7fbff,#fff);
+color:#222;
+}
+
+.brand{
+position:fixed;
+top:12px;
+left:0;
+right:0;
+text-align:center;
+font-weight:700;
+letter-spacing:2px;
+z-index:100;
+color:#555;
+}
+
+.container{
+max-width:500px;
+margin:auto;
+padding:60px 18px 30px;
+min-height:100vh;
+display:flex;
+align-items:center;
+}
+
+.card{
+width:100%;
+background:#fff;
+padding:24px;
+border-radius:28px;
+box-shadow:0 15px 40px rgba(0,0,0,.08);
+animation:fade .35s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateX(20px)}
+to{opacity:1;transform:none}
+}
+
+.hero{text-align:center}
+.hero h1{font-size:2rem;margin-bottom:10px}
+.hero h3{font-size:1.05rem}
+.hero p{margin-top:10px;line-height:1.6;color:#666}
+
+input{
+width:100%;
+padding:16px;
+border-radius:14px;
+border:1px solid #ddd;
+margin-top:12px;
+font-size:1rem;
+outline:none;
+}
+
+input:focus{border-color:#8bcdf1}
+
+.btn{
+width:100%;
+padding:16px;
+margin-top:16px;
+border:none;
+border-radius:14px;
+font-size:1rem;
+background:#111;
+color:#fff;
+cursor:pointer;
+}
+
+.option{
+width:100%;
+padding:15px;
+margin-top:10px;
+border-radius:16px;
+background:#fff;
+border:1px solid #ddd;
+font-size:1rem;
+cursor:pointer;
+transition:.2s;
+}
+
+.option:hover,.option.selected{
+background:#f4fbff;
+border-color:#6bc9ff;
+}
+
+.option.selected{
+box-shadow:0 0 0 2px rgba(107,201,255,.12);
+}
+
+.progress{
+font-weight:700;
+margin-bottom:10px;
+font-size:.95rem;
+}
+
+.bar{
+height:8px;
+background:#eee;
+border-radius:50px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.fill{
+height:100%;
+background:linear-gradient(90deg,#6bc9ff,#8bd7b1);
+transition:width .3s;
+}
+
+.question{
+font-size:1.35rem;
+line-height:1.5;
+word-break:keep-all;
+}
+
+.result-img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:18px;
+margin-bottom:20px;
+display:block;
+}
+
+.result-title{
+font-size:2rem;
+text-align:center;
+margin-bottom:8px;
+font-weight:800;
+}
+
+.result-desc{
+text-align:center;
+font-size:1.1rem;
+margin-bottom:10px;
+font-weight:600;
+}
+
+.result-detail{
+text-align:center;
+font-size:.92rem;
+color:#666;
+line-height:1.7;
+margin:10px 0;
+word-break:keep-all;
+}
+
+.note{
+text-align:center;
+color:#666;
+line-height:1.6;
+margin:14px 0 20px;
+padding:15px;
+background:#f8f8f7;
+border-radius:16px;
+}
+
+.thanks{
+text-align:center;
+margin-top:20px;
+color:#666;
+line-height:1.7;
+}
+
+.section-title{
+margin-bottom:8px;
+font-size:1rem;
+}
+
+.choice-group{
+margin-bottom:24px;
+}
+
+.back{
+width:100%;
+border:none;
+background:transparent;
+color:#888;
+padding:13px;
+cursor:pointer;
+}
+
+.small{
+font-size:.78rem;
+color:#999;
+text-align:center;
+margin-top:10px;
+line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="brand">Remake_23</div>
+
+<div class="container">
+<div id="app"></div>
+</div>
+
+<script>
+
+const WEBAPP_URL =
+"https://script.google.com/macros/s/AKfycbwKxU4hW8buU7vEkAP9AoZijVIWHEX3GL_NZeLwZzR-XvCxfLd3X_PZ0iXtu4IJJT9P2g/exec";
+
+let userName="";
+let userPhone="";
+let resultType="";
+let selectedDay="";
+let selectedTime="";
+let answers=[];
+let step=-1;
+
+const questions=[
+
+{
+q:"지금 당신이 가장 끌리는 여름 풍경은?",
+a:["푸른 바다","초록 숲","꽃이 핀 정원","노을이 지는 도시"]
+},
+
+{
+q:"여름에 가장 좋아하는 순간은?",
+a:["샤워 후","시원한 카페","선선한 밤 산책","휴가 떠나는 순간"]
+},
+
+{
+q:"당신의 평소 분위기와 가장 가까운 것은?",
+a:["밝고 활발한","편안하고 차분한","부드럽고 감성적인","조용하지만 분위기 있는"]
+},
+
+{
+q:"향수를 뿌린다면 어떤 느낌이 좋을까?",
+a:["깨끗하고 산뜻하게","포근하고 편안하게","은은하고 매력적으로","진하고 기억에 남게"]
+},
+
+{
+q:"카페에서 고른다면?",
+a:["레몬에이드","녹차","플라워티","아이스 아메리카노"]
+},
+
+{
+q:"이런 사람에게 끌린다면?",
+a:["시원하고 깔끔한 사람","편안하고 따뜻한 사람","부드럽고 다정한 사람","신비롭고 매력적인 사람"]
+},
+
+{
+q:"마지막으로, 여름에 가장 듣고 싶은 말은?",
+a:[
+"너 진짜 시원한 느낌이다",
+"너 옆에 있으면 편안해",
+"너한테서 좋은 향 난다",
+"너만의 분위기가 있는 것 같아"
+]
+}
+
+];
+
+const results = {
+
+FRESH:{
+title:"FRESH",
+desc:"맑고 청량한 당신",
+detail:"깨끗하고 산뜻한 분위기를 가진 당신에게는 가볍고 투명한 향이 잘 어울려요.",
+img:"fresh.jpg",
+note:"베르가못 · 레몬 · 뮤게 · 프리지아"
+},
+
+WOODY:{
+title:"WOODY",
+desc:"차분하고 편안한 당신",
+detail:"자연스럽고 편안한 분위기를 가진 당신에게는 은은하고 깊이 있는 우디 계열의 향이 잘 어울려요.",
+img:"woody.jpg",
+note:"아이비 · 샌달우드 · 시더우드"
+},
+
+FLORAL:{
+title:"FLORAL",
+desc:"부드럽고 감성적인 당신",
+detail:"따뜻하고 섬세한 분위기를 가진 당신에게는 은은하게 퍼지는 플로럴 계열의 향이 잘 어울려요.",
+img:"floral.jpg",
+note:"튜베로즈 · 다마스크로즈 · 프리지아"
+},
+
+MUSK:{
+title:"MUSK · ORIENTAL",
+desc:"신비롭고 매력적인 당신",
+detail:"조용하지만 자신만의 분위기가 있는 당신에게는 잔향이 오래 남는 매혹적인 향이 잘 어울려요.",
+img:"musk.jpg",
+note:"화이트머스크 · 머스크 · 앰버"
+}
+
+};
+
+const app=document.getElementById("app");
+
+function renderStart(){
+
+app.innerHTML=`
+
+<div class="card hero">
+
+<h1>☀️ 1분 여름향 테스트</h1>
+
+<h3>지금 당신에게 어울리는 향은?</h3>
+
+<p>
+7개의 질문에 답하고<br>
+나만의 여름 향을 찾아보세요.
+</p>
+
+<input id="name" placeholder="이름">
+
+<input
+id="phone"
+maxlength="13"
+inputmode="numeric"
+placeholder="010-0000-0000">
+
+<button class="btn"
+onclick="startTest()">
+START →
+</button>
+
+<div class="small">
+이름과 연락처는 시향 예약 접수를 위해서만 사용됩니다.
+</div>
+
+</div>
+
+`;
+
+}
+
+function startTest(){
+
+const name=document.getElementById("name").value.trim();
+const phone=document.getElementById("phone").value.trim();
+
+const pattern=/^010-\d{4}-\d{4}$/;
+
+if(!name){
+alert("이름을 입력해주세요.");
+return;
+}
+
+if(!pattern.test(phone)){
+alert("010-0000-0000 형식으로 입력해주세요.");
+return;
+}
+
+userName=name;
+userPhone=phone;
+answers=[];
+step=0;
+
+renderQuestion();
+
+}
+
+function renderQuestion(){
+
+const q=questions[step];
+
+app.innerHTML=`
+
+<div class="card">
+
+<div class="progress">
+${step+1} / ${questions.length}
+</div>
+
+<div class="bar">
+<div class="fill"
+style="width:${((step+1)/questions.length)*100}%">
+</div>
+</div>
+
+<h2 class="question">${q.q}</h2>
+
+${q.a.map((item,index)=>
+`<button
+class="option ${answers[step]===index?'selected':''}"
+onclick="selectAnswer(${index})">
+${item}
+</button>`
+).join("")}
+
+${step>0?`<button class="back" onclick="prevQuestion()">← 이전 질문</button>`:""}
+
+</div>
+
+`;
+
+}
+
+function selectAnswer(index){
+
+answers[step]=index;
+
+if(step<questions.length-1){
+step++;
+renderQuestion();
+}else{
+showResult();
+}
+
+}
+
+function prevQuestion(){
+
+if(step>0){
+step--;
+renderQuestion();
+}
+
+}
+
+function showResult(){
+
+const count=[0,0,0,0];
+
+answers.forEach(v=>count[v]++);
+
+const max=Math.max(...count);
+
+let tied=count
+.map((v,i)=>v===max?i:null)
+.filter(v=>v!==null);
+
+let idx=tied.length===1
+?tied[0]
+:answers[answers.length-1];
+
+const keys=["FRESH","WOODY","FLORAL","MUSK"];
+
+resultType=keys[idx];
+
+const result=results[resultType];
+
+app.innerHTML=`
+
+<div class="card">
+
+<img
+class="result-img"
+src="${result.img}"
+alt="${result.title} 향 타입">
+
+<div class="result-title">
+${result.title}
+</div>
+
+<div class="result-desc">
+${result.desc}
+</div>
+
+<div class="result-detail">
+${result.detail}
+</div>
+
+<div class="note">
+<strong>RECOMMENDED NOTES</strong><br>
+${result.note}
+</div>
+
+<button class="btn"
+onclick="showReservation()">
+🌿 나의 향 직접 시향하기
+</button>
+
+<button class="option"
+onclick="restartTest()">
+↻ 다시 테스트하기
+</button>
+
+</div>
+
+`;
+
+}
+
+function showReservation(){
+
+selectedDay="";
+selectedTime="";
+
+app.innerHTML=`
+
+<div class="card">
+
+<h2>시향 예약 신청</h2>
+
+<br>
+
+<div class="choice-group">
+<h3 class="section-title">방문 요일</h3>
+
+<button id="dayWeek" class="option"
+onclick="chooseDay('월~금','dayWeek')">
+월~금
+</button>
+
+<button id="dayOther" class="option"
+onclick="chooseDay('그 외','dayOther')">
+그 외
+</button>
+</div>
+
+<div class="choice-group">
+<h3 class="section-title">희망 시간</h3>
+
+<button id="time16" class="option"
+onclick="chooseTime('16시','time16')">
+16시
+</button>
+
+<button id="time17" class="option"
+onclick="chooseTime('17시','time17')">
+17시
+</button>
+
+<button id="time18" class="option"
+onclick="chooseTime('18시','time18')">
+18시
+</button>
+
+<button id="time19" class="option"
+onclick="chooseTime('19시','time19')">
+19시
+</button>
+
+<button id="timeOther" class="option"
+onclick="chooseTime('그 외','timeOther')">
+그 외
+</button>
+</div>
+
+<button class="btn"
+onclick="submitReservation()">
+예약 신청하기
+</button>
+
+<button class="back" onclick="showResultAgain()">
+← 결과로 돌아가기
+</button>
+
+</div>
+
+`;
+
+}
+
+function chooseDay(day,id){
+
+selectedDay=day;
+
+document.querySelectorAll("#dayWeek,#dayOther")
+.forEach(el=>el.classList.remove("selected"));
+
+document.getElementById(id).classList.add("selected");
+
+}
+
+function chooseTime(time,id){
+
+selectedTime=time;
+
+document.querySelectorAll(
+"#time16,#time17,#time18,#time19,#timeOther"
+)
+.forEach(el=>el.classList.remove("selected"));
+
+document.getElementById(id).classList.add("selected");
+
+}
+
+function showResultAgain(){
+showResult();
+}
+
+async function submitReservation(){
+
+if(!selectedDay){
+alert("요일을 선택해주세요.");
+return;
+}
+
+if(!selectedTime){
+alert("시간을 선택해주세요.");
+return;
+}
+
+try{
+
+// Google Apps Script Web App은 application/json 요청에서
+// CORS preflight가 발생해 모바일 브라우저에서 막힐 수 있습니다.
+// URLSearchParams로 보내면 일반 form POST로 전송되어 이 문제를 피할 수 있습니다.
+const formData = new URLSearchParams();
+formData.append("name", userName);
+formData.append("phone", userPhone);
+formData.append("result", resultType);
+formData.append("day", selectedDay);
+formData.append("time", selectedTime);
+
+await fetch(WEBAPP_URL,{
+method:"POST",
+mode:"no-cors",
+body:formData
+});
+
+app.innerHTML=`
+
+<div class="card hero">
+
+<h2>예약 신청 완료</h2>
+
+<br>
+
+<p>
+시향 예약 정보가 전송되었습니다.
+</p>
+
+<br>
+
+<h3>Remake_23</h3>
+
+<div class="thanks">
+참여해주셔서 감사합니다.<br>
+당신에게 어울리는 향을 직접 만나보세요.
+</div>
+
+</div>
+
+`;
+
+}catch(error){
+
+alert("예약 전송 실패");
+
+}
+
+}
+
+function restartTest(){
+
+answers=[];
+step=-1;
+selectedDay="";
+selectedTime="";
+userName="";
+userPhone="";
+
+renderStart();
+
+}
+
+document.addEventListener("input",e=>{
+
+if(e.target.id==="phone"){
+
+let value=e.target.value.replace(/\D/g,'');
+
+if(value.length>11){
+value=value.slice(0,11);
+}
+
+if(value.length>=8){
+value=value.replace(
+/(\d{3})(\d{4})(\d+)/,
+"$1-$2-$3"
+);
+}else if(value.length>=4){
+value=value.replace(
+/(\d{3})(\d+)/,
+"$1-$2"
+);
+}
+
+e.target.value=value;
+
+}
+
+});
+
+renderStart();
+
+</script>
+
+</body>
+</html>
