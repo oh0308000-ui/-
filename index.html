@@ -1,409 +1,771 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7fbff">
-  <title>1분 여름향 테스트 | Remake_23</title>
-  <style>
-    :root {
-      --ink:#17212b;
-      --muted:#66727d;
-      --line:#dfe8ee;
-      --sky:#84d4f4;
-      --green:#8bd7b1;
-      --card:#ffffff;
-    }
-    * { box-sizing:border-box; }
-    html, body { margin:0; min-height:100%; }
-    body {
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
-      color:var(--ink);
-      background:linear-gradient(180deg,#f4faff 0%,#ffffff 100%);
-      -webkit-font-smoothing:antialiased;
-    }
-    button, input { font:inherit; }
-    button { -webkit-tap-highlight-color:transparent; }
-    .brand {
-      position:fixed;
-      top:max(18px, env(safe-area-inset-top));
-      left:50%;
-      transform:translateX(-50%);
-      z-index:100;
-      color:#52585e;
-      font-weight:800;
-      letter-spacing:2.4px;
-      white-space:nowrap;
-    }
-    .container {
-      width:100%;
-      max-width:500px;
-      min-height:100svh;
-      margin:0 auto;
-      padding:max(68px, calc(env(safe-area-inset-top) + 58px)) 18px max(28px, env(safe-area-inset-bottom));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .card {
-      width:100%;
-      padding:24px;
-      background:rgba(255,255,255,.96);
-      border:1px solid rgba(223,232,238,.72);
-      border-radius:28px;
-      box-shadow:0 18px 48px rgba(58,78,91,.12);
-      animation:slideIn .34s ease both;
-    }
-    @keyframes slideIn {
-      from { opacity:0; transform:translateX(22px); }
-      to { opacity:1; transform:translateX(0); }
-    }
-    @keyframes resultIn {
-      0% { opacity:0; transform:scale(.94) translateY(10px); }
-      100% { opacity:1; transform:scale(1) translateY(0); }
-    }
-    .hero, .complete-card { text-align:center; }
-    .hero h1 { margin:0 0 12px; font-size:clamp(1.8rem,8vw,2.25rem); letter-spacing:-.04em; }
-    .hero h3 { margin:0; font-size:1.08rem; }
-    .hero p { margin:14px 0 18px; color:var(--muted); line-height:1.65; }
-    label { display:block; margin-top:12px; text-align:left; font-size:.86rem; font-weight:700; color:#48545f; }
-    input {
-      width:100%;
-      margin-top:7px;
-      padding:16px;
-      color:var(--ink);
-      background:#fff;
-      border:1px solid #d8e1e7;
-      border-radius:14px;
-      outline:none;
-    }
-    input:focus { border-color:var(--sky); box-shadow:0 0 0 3px rgba(132,212,244,.18); }
-    .btn, .option, .back {
-      width:100%;
-      border:0;
-      cursor:pointer;
-    }
-    .btn {
-      min-height:54px;
-      margin-top:16px;
-      padding:15px 18px;
-      color:#fff;
-      background:#17212b;
-      border-radius:15px;
-      font-weight:800;
-      transition:transform .16s ease, opacity .16s ease;
-    }
-    .btn:active { transform:scale(.985); }
-    .btn:disabled { opacity:.55; cursor:wait; }
-    .option {
-      min-height:54px;
-      margin-top:10px;
-      padding:14px 16px;
-      color:var(--ink);
-      text-align:left;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;
-    }
-    .option:hover, .option.selected {
-      background:#f1fbff;
-      border-color:var(--sky);
-      box-shadow:0 0 0 3px rgba(132,212,244,.12);
-    }
-    .option.selected { transform:translateX(5px); font-weight:700; }
-    .progress { margin-bottom:9px; font-size:.9rem; font-weight:800; }
-    .bar { height:8px; margin-bottom:22px; overflow:hidden; background:#eaf0f3; border-radius:999px; }
-    .fill { height:100%; background:linear-gradient(90deg,var(--sky),var(--green)); border-radius:inherit; transition:width .3s ease; }
-    .question { margin:0 0 12px; font-size:1.35rem; line-height:1.5; letter-spacing:-.025em; word-break:keep-all; }
-    .back { margin-top:10px; padding:12px; color:#7a858e; background:transparent; }
-    .result-card { animation:resultIn .5s ease both; }
-    .result-img {
-      display:block;
-      width:100%;
-      aspect-ratio:1/1;
-      margin-bottom:20px;
-      object-fit:cover;
-      background:#edf3f5;
-      border-radius:20px;
-    }
-    .result-kicker { text-align:center; color:#73808a; font-size:.78rem; font-weight:800; letter-spacing:.14em; }
-    .result-title { margin-top:5px; text-align:center; font-size:2rem; font-weight:900; letter-spacing:.02em; }
-    .result-desc { margin-top:8px; text-align:center; font-size:1.12rem; font-weight:750; }
-    .result-detail { margin:12px auto 0; color:var(--muted); text-align:center; font-size:.94rem; line-height:1.7; word-break:keep-all; }
-    .note { margin:17px 0 7px; padding:16px; color:#5f6b74; text-align:center; line-height:1.65; background:#f7f9f8; border-radius:16px; }
-    .note strong { color:#37434c; font-size:.78rem; letter-spacing:.1em; }
-    .reservation-summary { margin:12px 0 22px; padding:14px; color:#59656e; background:#f7f9fa; border-radius:14px; line-height:1.65; }
-    .section-title { margin:0 0 5px; font-size:1rem; }
-    .choice-group { margin-top:24px; }
-    .small { margin-top:11px; color:#8a949c; text-align:center; font-size:.77rem; line-height:1.5; }
-    .complete-card {
-      min-height:min(440px, calc(100svh - 130px));
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:38px 28px;
-    }
-    .check-icon {
-      width:72px;
-      height:72px;
-      margin-bottom:22px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#25945b;
-      background:#eaf9ef;
-      border-radius:50%;
-      font-size:2rem;
-      font-weight:900;
-    }
-    .complete-card h2 { margin:0; font-size:1.72rem; }
-    .complete-card p { margin:18px 0 0; color:var(--muted); line-height:1.65; }
-    .complete-brand { margin-top:28px; font-weight:900; letter-spacing:1px; }
-    .thanks { margin-top:18px; color:var(--muted); line-height:1.7; }
-    .error { margin-top:10px; color:#b42318; font-size:.84rem; text-align:left; }
-    @media (max-width:380px) {
-      .container { padding-left:12px; padding-right:12px; }
-      .card { padding:20px; border-radius:24px; }
-    }
-    @media (prefers-reduced-motion:reduce) {
-      *, *::before, *::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>✨ 퍼스널 향 테스트 | Remake_23</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;
+background:linear-gradient(180deg,#f7fbff,#fff);
+color:#222;
+}
+
+.brand{
+position:fixed;
+top:12px;
+left:0;
+right:0;
+text-align:center;
+font-weight:700;
+letter-spacing:2px;
+z-index:100;
+color:#555;
+}
+
+.container{
+max-width:500px;
+margin:auto;
+padding:60px 18px 30px;
+min-height:100vh;
+display:flex;
+align-items:center;
+}
+
+.card{
+width:100%;
+background:#fff;
+padding:24px;
+border-radius:28px;
+box-shadow:0 15px 40px rgba(0,0,0,.08);
+animation:fade .35s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateX(20px)}
+to{opacity:1;transform:none}
+}
+
+.hero{text-align:center}
+.hero h1{font-size:2rem;margin-bottom:10px}
+.hero h3{font-size:1.05rem}
+.hero p{margin-top:10px;line-height:1.6;color:#666}
+
+input{
+width:100%;
+padding:16px;
+border-radius:14px;
+border:1px solid #ddd;
+margin-top:12px;
+font-size:1rem;
+outline:none;
+}
+
+input:focus{border-color:#8bcdf1}
+
+.btn{
+width:100%;
+padding:16px;
+margin-top:16px;
+border:none;
+border-radius:14px;
+font-size:1rem;
+background:#111;
+color:#fff;
+cursor:pointer;
+}
+
+.option{
+width:100%;
+padding:15px;
+margin-top:10px;
+border-radius:16px;
+background:#fff;
+border:1px solid #ddd;
+font-size:1rem;
+cursor:pointer;
+transition:.2s;
+}
+
+.option:hover,.option.selected{
+background:#f4fbff;
+border-color:#6bc9ff;
+}
+
+.option.selected{
+box-shadow:0 0 0 2px rgba(107,201,255,.12);
+}
+
+.progress{
+font-weight:700;
+margin-bottom:10px;
+font-size:.95rem;
+}
+
+.bar{
+height:8px;
+background:#eee;
+border-radius:50px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.fill{
+height:100%;
+background:linear-gradient(90deg,#6bc9ff,#8bd7b1);
+transition:width .3s;
+}
+
+.question{
+font-size:1.35rem;
+line-height:1.5;
+word-break:keep-all;
+}
+
+.result-img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:18px;
+margin-bottom:20px;
+display:block;
+}
+
+.result-title{
+font-size:2rem;
+text-align:center;
+margin-bottom:8px;
+font-weight:800;
+}
+
+.result-desc{
+text-align:center;
+font-size:1.1rem;
+margin-bottom:10px;
+font-weight:600;
+}
+
+.result-detail{
+text-align:center;
+font-size:.92rem;
+color:#666;
+line-height:1.7;
+margin:10px 0;
+word-break:keep-all;
+}
+
+.note{
+text-align:center;
+color:#666;
+line-height:1.6;
+margin:14px 0 20px;
+padding:15px;
+background:#f8f8f7;
+border-radius:16px;
+}
+
+.thanks{
+text-align:center;
+margin-top:20px;
+color:#666;
+line-height:1.7;
+}
+
+.section-title{
+margin-bottom:8px;
+font-size:1rem;
+}
+
+.choice-group{
+margin-bottom:24px;
+}
+
+.back{
+width:100%;
+border:none;
+background:transparent;
+color:#888;
+padding:13px;
+cursor:pointer;
+}
+
+.birth-hint{font-size:.75rem;color:#999;text-align:left;margin-top:6px;line-height:1.5}
+
+.small{
+font-size:.78rem;
+color:#999;
+text-align:center;
+margin-top:10px;
+line-height:1.5;
+}
+</style>
 </head>
+
 <body>
-  <div class="brand">Remake_23</div>
-  <main class="container"><div id="app"></div></main>
 
-  <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwKxU4hW8buU7vEkAP9AoZijVIWHEX3GL_NZeLwZzR-XvCxfLd3X_PZ0iXtu4IJJT9P2g/exec";
+<div class="brand">Remake_23</div>
 
-    let userName = "";
-    let userPhone = "";
-    let resultType = "";
-    let selectedDay = "";
-    let selectedTime = "";
-    let answers = [];
-    let step = -1;
-    let sending = false;
+<div class="container">
+<div id="app"></div>
+</div>
 
-    const questions = [
-      { q:"지금 당신이 가장 끌리는 여름 풍경은?", a:["푸른 바다","초록 숲","꽃이 핀 정원","노을이 지는 도시"] },
-      { q:"여름에 가장 좋아하는 순간은?", a:["샤워 후","시원한 카페","선선한 밤 산책","휴가 떠나는 순간"] },
-      { q:"당신의 평소 분위기와 가장 가까운 것은?", a:["밝고 활발한","편안하고 차분한","부드럽고 감성적인","조용하지만 분위기 있는"] },
-      { q:"향수를 뿌린다면 어떤 느낌이 좋을까?", a:["깨끗하고 산뜻하게","포근하고 편안하게","은은하고 매력적으로","진하고 기억에 남게"] },
-      { q:"카페에서 고른다면?", a:["레몬에이드","녹차","플라워티","아이스 아메리카노"] },
-      { q:"이런 사람에게 끌린다면?", a:["시원하고 깔끔한 사람","편안하고 따뜻한 사람","부드럽고 다정한 사람","신비롭고 매력적인 사람"] },
-      { q:"마지막으로, 여름에 가장 듣고 싶은 말은?", a:["너 진짜 시원한 느낌이다","너 옆에 있으면 편안해","너한테서 좋은 향 난다","너만의 분위기가 있는 것 같아"] }
-    ];
+<script>
 
-    const results = {
-      FRESH:{
-        title:"FRESH", desc:"청량하고 깨끗한 당신",
-        detail:"맑고 산뜻한 분위기를 가진 당신에게는 부담스럽지 않고 깨끗한 느낌의 향이 잘 어울려요.",
-        img:"fresh.jpg", note:"베르가못 · 레몬 · 뮤게 · 프리지아"
-      },
-      WOODY:{
-        title:"WOODY", desc:"차분하고 편안한 당신",
-        detail:"자연스럽고 편안한 분위기를 가진 당신에게는 은은하고 깊이 있는 우디 계열의 향이 잘 어울려요.",
-        img:"woody.jpg", note:"아이비 · 샌달우드 · 시더우드"
-      },
-      FLORAL:{
-        title:"FLORAL", desc:"부드럽고 감성적인 당신",
-        detail:"따뜻하고 섬세한 분위기를 가진 당신에게는 은은하게 퍼지는 플로럴 계열의 향이 잘 어울려요.",
-        img:"floral.jpg", note:"튜베로즈 · 다마스크로즈 · 프리지아"
-      },
-      MUSK:{
-        title:"MUSK / ORIENTAL", desc:"신비롭고 매력적인 당신",
-        detail:"조용하지만 자신만의 분위기가 있는 당신에게는 잔향이 오래 남는 매혹적인 향이 잘 어울려요.",
-        img:"musk.jpg", note:"화이트머스크 · 머스크 · 앰버"
-      }
-    };
+const WEBAPP_URL =
+"https://script.google.com/macros/s/AKfycbwKxU4hW8buU7vEkAP9AoZijVIWHEX3GL_NZeLwZzR-XvCxfLd3X_PZ0iXtu4IJJT9P2g/exec";
 
-    const app = document.getElementById("app");
+let userName="";
+let userPhone="";
+let userBirth="";
+let resultType="";
+let selectedDay="";
+let selectedTime="";
+let answers=[];
+let step=-1;
+let testLeadSent=false;
 
-    function renderStart(){
-      app.innerHTML = `
-        <section class="card hero">
-          <h1>1분 여름향 테스트</h1>
-          <h3>지금 당신에게 어울리는 향은?</h3>
-          <p>7개의 질문에 답하고<br>나만의 여름 향을 찾아보세요.</p>
-          <label for="name">이름</label>
-          <input id="name" type="text" autocomplete="name" maxlength="30" placeholder="이름을 입력해주세요">
-          <label for="phone">연락처</label>
-          <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000">
-          <div id="startError" class="error" aria-live="polite"></div>
-          <button class="btn" type="button" onclick="startTest()">START</button>
-          <div class="small">이름과 연락처는 시향 예약 접수를 위해서만 사용됩니다.</div>
-        </section>`;
-    }
+const questions=[
 
-    function startTest(){
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const error = document.getElementById("startError");
-      if(!name){ error.textContent = "이름을 입력해주세요."; return; }
-      if(!/^010-\d{4}-\d{4}$/.test(phone)){
-        error.textContent = "연락처를 010-0000-0000 형식으로 입력해주세요.";
-        return;
-      }
-      userName = name;
-      userPhone = phone;
-      answers = [];
-      step = 0;
-      renderQuestion();
-    }
+{
+q:"지금 당신이 가장 끌리는 분위기는?",
+a:["푸른 바다","초록 숲","꽃이 핀 정원","노을이 지는 도시"]
+},
 
-    function renderQuestion(){
-      const item = questions[step];
-      app.innerHTML = `
-        <section class="card">
-          <div class="progress">${step + 1} / ${questions.length}</div>
-          <div class="bar"><div class="fill" style="width:${((step + 1) / questions.length) * 100}%"></div></div>
-          <h2 class="question">${item.q}</h2>
-          ${item.a.map((answer,index) => `<button class="option ${answers[step]===index?'selected':''}" type="button" onclick="selectAnswer(this,${index})">${answer}</button>`).join("")}
-          ${step > 0 ? '<button class="back" type="button" onclick="prevQuestion()">이전 질문</button>' : ''}
-        </section>`;
-    }
+{
+q:"가장 좋아하는 순간은?",
+a:["샤워 후","시원한 카페","선선한 밤 산책","휴가 떠나는 순간"]
+},
 
-    function selectAnswer(button,index){
-      document.querySelectorAll(".option").forEach(el => el.disabled = true);
-      button.classList.add("selected");
-      answers[step] = index;
-      setTimeout(() => {
-        if(step < questions.length - 1){ step++; renderQuestion(); }
-        else { showResult(); }
-      }, 220);
-    }
+{
+q:"당신의 평소 분위기와 가장 가까운 것은?",
+a:["밝고 활발한","편안하고 차분한","부드럽고 감성적인","조용하지만 분위기 있는"]
+},
 
-    function prevQuestion(){
-      if(step > 0){ step--; renderQuestion(); }
-    }
+{
+q:"향수를 뿌린다면 어떤 느낌이 좋을까?",
+a:["깨끗하고 산뜻하게","포근하고 편안하게","은은하고 매력적으로","진하고 기억에 남게"]
+},
 
-    function calculateResult(){
-      const count = [0,0,0,0];
-      answers.forEach(value => count[value]++);
-      const max = Math.max(...count);
-      const tied = count.map((value,index) => value === max ? index : null).filter(value => value !== null);
-      return tied.length === 1 ? tied[0] : answers[answers.length - 1];
-    }
+{
+q:"카페에서 고른다면?",
+a:["레몬에이드","녹차","플라워티","아이스 아메리카노"]
+},
 
-    function showResult(){
-      const keys = ["FRESH","WOODY","FLORAL","MUSK"];
-      resultType = keys[calculateResult()];
-      const result = results[resultType];
-      app.innerHTML = `
-        <section class="card result-card">
-          <img class="result-img" src="${result.img}" alt="${result.title} 결과 이미지" onerror="this.style.display='none'">
-          <div class="result-kicker">당신의 여름 향은</div>
-          <div class="result-title">${result.title}</div>
-          <div class="result-desc">${result.desc}</div>
-          <div class="result-detail">${result.detail}</div>
-          <div class="note"><strong>RECOMMENDED NOTES</strong><br>${result.note}</div>
-          <p class="result-detail"><strong>당신에게 어울리는 향, 직접 맡아보세요.</strong></p>
-          <button class="btn" type="button" onclick="showReservation()">나의 향 직접 시향하기</button>
-          <button class="option" type="button" onclick="restartTest()">다시 테스트하기</button>
-        </section>`;
-    }
+{
+q:"이런 사람에게 끌린다면?",
+a:["시원하고 깔끔한 사람","편안하고 따뜻한 사람","부드럽고 다정한 사람","신비롭고 매력적인 사람"]
+},
 
-    function showReservation(){
-      selectedDay = "";
-      selectedTime = "";
-      app.innerHTML = `
-        <section class="card">
-          <h2>시향 예약 신청</h2>
-          <div class="reservation-summary"><strong>${userName}</strong><br>${userPhone}<br>테스트 결과: ${results[resultType].title}</div>
-          <div class="choice-group">
-            <h3 class="section-title">방문 요일</h3>
-            <button id="dayWeek" class="option" type="button" onclick="chooseDay('월~금','dayWeek')">월~금</button>
-            <button id="dayOther" class="option" type="button" onclick="chooseDay('그 외','dayOther')">그 외</button>
-          </div>
-          <div class="choice-group">
-            <h3 class="section-title">희망 시간</h3>
-            <button id="time16" class="option" type="button" onclick="chooseTime('16시','time16')">16시</button>
-            <button id="time17" class="option" type="button" onclick="chooseTime('17시','time17')">17시</button>
-            <button id="time18" class="option" type="button" onclick="chooseTime('18시','time18')">18시</button>
-            <button id="time19" class="option" type="button" onclick="chooseTime('19시','time19')">19시</button>
-            <button id="timeOther" class="option" type="button" onclick="chooseTime('그 외','timeOther')">그 외</button>
-          </div>
-          <button id="submitBtn" class="btn" type="button" onclick="submitReservation()">예약 신청하기</button>
-          <button class="back" type="button" onclick="showResult()">결과로 돌아가기</button>
-        </section>`;
-    }
+{
+q:"마지막으로 가장 듣고 싶은 말은?",
+a:[
+"너 진짜 시원한 느낌이다",
+"너 옆에 있으면 편안해",
+"너한테서 좋은 향 난다",
+"너만의 분위기가 있는 것 같아"
+]
+}
 
-    function chooseDay(day,id){
-      selectedDay = day;
-      document.querySelectorAll("#dayWeek,#dayOther").forEach(el => el.classList.remove("selected"));
-      document.getElementById(id).classList.add("selected");
-    }
+];
 
-    function chooseTime(time,id){
-      selectedTime = time;
-      document.querySelectorAll("#time16,#time17,#time18,#time19,#timeOther").forEach(el => el.classList.remove("selected"));
-      document.getElementById(id).classList.add("selected");
-    }
+const results = {
 
-    async function submitReservation(){
-      if(!selectedDay){ alert("요일을 선택해주세요."); return; }
-      if(!selectedTime){ alert("시간을 선택해주세요."); return; }
-      if(sending) return;
-      sending = true;
-      const button = document.getElementById("submitBtn");
-      button.disabled = true;
-      button.textContent = "전송 중...";
+FRESH:{
+title:"FRESH",
+desc:"맑고 청량한 당신",
+detail:"깨끗하고 산뜻한 분위기를 가진 당신에게는 가볍고 투명한 향이 잘 어울려요.",
+img:"fresh.jpg",
+note:"베르가못 · 레몬 · 뮤게 · 프리지아"
+},
 
-      const formData = new URLSearchParams();
-      formData.append("name", userName);
-      formData.append("phone", userPhone);
-      formData.append("result", resultType);
-      formData.append("day", selectedDay);
-      formData.append("time", selectedTime);
+WOODY:{
+title:"WOODY",
+desc:"차분하고 편안한 당신",
+detail:"자연스럽고 편안한 분위기를 가진 당신에게는 은은하고 깊이 있는 우디 계열의 향이 잘 어울려요.",
+img:"woody.jpg",
+note:"아이비 · 샌달우드 · 시더우드"
+},
 
-      try {
-        await fetch(WEBAPP_URL, { method:"POST", mode:"no-cors", body:formData });
-        showComplete();
-      } catch(error) {
-        sending = false;
-        button.disabled = false;
-        button.textContent = "예약 신청하기";
-        alert("예약 정보를 전송하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해주세요.");
-      }
-    }
+FLORAL:{
+title:"FLORAL",
+desc:"부드럽고 감성적인 당신",
+detail:"따뜻하고 섬세한 분위기를 가진 당신에게는 은은하게 퍼지는 플로럴 계열의 향이 잘 어울려요.",
+img:"floral.jpg",
+note:"튜베로즈 · 다마스크로즈 · 프리지아"
+},
 
-    function showComplete(){
-      app.innerHTML = `
-        <section class="card complete-card">
-          <div class="check-icon" aria-hidden="true">✓</div>
-          <h2>예약 신청 완료</h2>
-          <p>시향 예약 정보가 정상적으로 전송되었습니다.</p>
-          <div class="complete-brand">Remake_23</div>
-          <div class="thanks">참여해주셔서 감사합니다.<br>당신만의 여름 향을 직접 만나보세요.</div>
-          <button class="btn" type="button" onclick="restartTest()">처음으로 돌아가기</button>
-        </section>`;
-    }
+MUSK:{
+title:"MUSK · ORIENTAL",
+desc:"신비롭고 매력적인 당신",
+detail:"조용하지만 자신만의 분위기가 있는 당신에게는 잔향이 오래 남는 매혹적인 향이 잘 어울려요.",
+img:"musk.jpg",
+note:"화이트머스크 · 머스크 · 앰버"
+}
 
-    function restartTest(){
-      userName = "";
-      userPhone = "";
-      resultType = "";
-      selectedDay = "";
-      selectedTime = "";
-      answers = [];
-      step = -1;
-      sending = false;
-      renderStart();
-    }
+};
 
-    document.addEventListener("input", event => {
-      if(event.target.id !== "phone") return;
-      let value = event.target.value.replace(/\D/g,"").slice(0,11);
-      if(value.length >= 8) value = value.replace(/(\d{3})(\d{4})(\d+)/,"$1-$2-$3");
-      else if(value.length >= 4) value = value.replace(/(\d{3})(\d+)/,"$1-$2");
-      event.target.value = value;
-    });
+const app=document.getElementById("app");
 
-    renderStart();
-  </script>
+function renderStart(){
+
+app.innerHTML=`
+
+<div class="card hero">
+
+<h1>✨ 퍼스널 향 테스트</h1>
+
+<h3>지금 당신에게 어울리는 향은?</h3>
+
+<p>
+7개의 질문에 답하고<br>
+나에게 어울리는 퍼스널 향을 찾아보세요.
+</p>
+
+<input id="name" placeholder="이름">
+
+<input
+id="birth"
+maxlength="10"
+inputmode="numeric"
+placeholder="생년월일 0000.00.00">
+<div class="birth-hint">예: 2004.03.21 · 실제 존재하는 날짜만 입력해주세요.</div>
+
+<input
+id="phone"
+maxlength="13"
+inputmode="numeric"
+placeholder="010-0000-0000">
+
+<button class="btn"
+onclick="startTest()">
+START →
+</button>
+
+<div class="small">
+이름·생년월일·연락처는 테스트 참여 및 향 추천 결과 확인을 위해 사용됩니다.
+</div>
+
+</div>
+
+`;
+
+}
+
+function isValidDate(value){
+const [y,m,d]=value.split(".").map(Number);
+if(!y || m<1 || m>12 || d<1) return false;
+const lastDay=new Date(y,m,0).getDate();
+return d<=lastDay;
+}
+
+function startTest(){
+
+const name=document.getElementById("name").value.trim();
+const birth=document.getElementById("birth").value.trim();
+const phone=document.getElementById("phone").value.trim();
+
+const phonePattern=/^010-\d{4}-\d{4}$/;
+const birthPattern=/^\d{4}\.\d{2}\.\d{2}$/;
+
+if(!name){
+alert("이름을 입력해주세요.");
+return;
+}
+
+if(!birthPattern.test(birth) || !isValidDate(birth)){
+alert("생년월일을 실제 존재하는 날짜로 입력해주세요.\n예: 2004.03.21");
+return;
+}
+
+if(!phonePattern.test(phone)){
+alert("010-0000-0000 형식으로 입력해주세요.");
+return;
+}
+
+userName=name;
+userBirth=birth;
+userPhone=phone;
+answers=[];
+step=0;
+
+renderQuestion();
+
+}
+
+function renderQuestion(){
+
+const q=questions[step];
+
+app.innerHTML=`
+
+<div class="card">
+
+<div class="progress">
+${step+1} / ${questions.length}
+</div>
+
+<div class="bar">
+<div class="fill"
+style="width:${((step+1)/questions.length)*100}%">
+</div>
+</div>
+
+<h2 class="question">${q.q}</h2>
+
+${q.a.map((item,index)=>
+`<button
+class="option ${answers[step]===index?'selected':''}"
+onclick="selectAnswer(${index})">
+${item}
+</button>`
+).join("")}
+
+${step>0?`<button class="back" onclick="prevQuestion()">← 이전 질문</button>`:""}
+
+</div>
+
+`;
+
+}
+
+function selectAnswer(index){
+
+answers[step]=index;
+
+if(step<questions.length-1){
+step++;
+renderQuestion();
+}else{
+showResult();
+}
+
+}
+
+function prevQuestion(){
+
+if(step>0){
+step--;
+renderQuestion();
+}
+
+}
+
+async function sendTestLead(){
+
+if(testLeadSent) return;
+
+testLeadSent=true;
+
+try{
+
+const formData = new URLSearchParams();
+formData.append("name", userName);
+formData.append("phone", userPhone);
+formData.append("birth", userBirth);
+formData.append("result", resultType);
+formData.append("day", "");
+formData.append("time", "");
+formData.append("type", "TEST_COMPLETE");
+
+await fetch(WEBAPP_URL,{
+method:"POST",
+mode:"no-cors",
+body:formData
+});
+
+}catch(error){
+console.error("테스트 결과 전송 실패", error);
+}
+
+}
+
+function showResult(){
+
+const count=[0,0,0,0];
+
+answers.forEach(v=>count[v]++);
+
+const max=Math.max(...count);
+
+let tied=count
+.map((v,i)=>v===max?i:null)
+.filter(v=>v!==null);
+
+let idx=tied.length===1
+?tied[0]
+:answers[answers.length-1];
+
+const keys=["FRESH","WOODY","FLORAL","MUSK"];
+
+resultType=keys[idx];
+
+const result=results[resultType];
+
+// 테스트만 완료해도 이름/생년월일/연락처/결과를 자동 전송합니다.
+sendTestLead();
+
+app.innerHTML=`
+
+<div class="card">
+
+<img
+class="result-img"
+src="${result.img}"
+alt="${result.title} 향 타입">
+
+<div class="result-title">
+${result.title}
+</div>
+
+<div class="result-desc">
+${result.desc}
+</div>
+
+<div class="result-detail">
+${result.detail}
+</div>
+
+<div class="note">
+<strong>RECOMMENDED NOTES</strong><br>
+${result.note}
+</div>
+
+<button class="btn"
+onclick="showReservation()">
+🌿 나의 향 직접 시향하기
+</button>
+
+<button class="option"
+onclick="restartTest()">
+↻ 다시 테스트하기
+</button>
+
+</div>
+
+`;
+
+}
+
+function showReservation(){
+
+selectedDay="";
+selectedTime="";
+
+app.innerHTML=`
+
+<div class="card">
+
+<h2>시향 예약 신청</h2>
+
+<br>
+
+<div class="choice-group">
+<h3 class="section-title">방문 요일</h3>
+
+<button id="dayWeek" class="option"
+onclick="chooseDay('월~금','dayWeek')">
+월~금
+</button>
+
+<button id="dayOther" class="option"
+onclick="chooseDay('그 외','dayOther')">
+그 외
+</button>
+</div>
+
+<div class="choice-group">
+<h3 class="section-title">희망 시간</h3>
+
+<button id="time16" class="option"
+onclick="chooseTime('16시','time16')">
+16시
+</button>
+
+<button id="time17" class="option"
+onclick="chooseTime('17시','time17')">
+17시
+</button>
+
+<button id="time18" class="option"
+onclick="chooseTime('18시','time18')">
+18시
+</button>
+
+<button id="time19" class="option"
+onclick="chooseTime('19시','time19')">
+19시
+</button>
+
+<button id="timeOther" class="option"
+onclick="chooseTime('그 외','timeOther')">
+그 외
+</button>
+</div>
+
+<button class="btn"
+onclick="submitReservation()">
+예약 신청하기
+</button>
+
+<button class="back" onclick="showResultAgain()">
+← 결과로 돌아가기
+</button>
+
+</div>
+
+`;
+
+}
+
+function chooseDay(day,id){
+
+selectedDay=day;
+
+document.querySelectorAll("#dayWeek,#dayOther")
+.forEach(el=>el.classList.remove("selected"));
+
+document.getElementById(id).classList.add("selected");
+
+}
+
+function chooseTime(time,id){
+
+selectedTime=time;
+
+document.querySelectorAll(
+"#time16,#time17,#time18,#time19,#timeOther"
+)
+.forEach(el=>el.classList.remove("selected"));
+
+document.getElementById(id).classList.add("selected");
+
+}
+
+function showResultAgain(){
+showResult();
+}
+
+async function submitReservation(){
+
+if(!selectedDay){
+alert("요일을 선택해주세요.");
+return;
+}
+
+if(!selectedTime){
+alert("시간을 선택해주세요.");
+return;
+}
+
+try{
+
+// Google Apps Script Web App은 application/json 요청에서
+// CORS preflight가 발생해 모바일 브라우저에서 막힐 수 있습니다.
+// URLSearchParams로 보내면 일반 form POST로 전송되어 이 문제를 피할 수 있습니다.
+const formData = new URLSearchParams();
+formData.append("name", userName);
+formData.append("phone", userPhone);
+formData.append("birth", userBirth);
+formData.append("result", resultType);
+formData.append("day", selectedDay);
+formData.append("time", selectedTime);
+
+await fetch(WEBAPP_URL,{
+method:"POST",
+mode:"no-cors",
+body:formData
+});
+
+app.innerHTML=`
+
+<div class="card hero">
+
+<h2>예약 신청 완료</h2>
+
+<br>
+
+<p>
+시향 예약 정보가 전송되었습니다.
+</p>
+
+<br>
+
+<h3>Remake_23</h3>
+
+<div class="thanks">
+참여해주셔서 감사합니다.<br>
+당신에게 어울리는 향을 직접 만나보세요.
+</div>
+
+</div>
+
+`;
+
+}catch(error){
+
+alert("예약 전송 실패");
+
+}
+
+}
+
+function restartTest(){
+
+answers=[];
+step=-1;
+testLeadSent=false;
+selectedDay="";
+selectedTime="";
+userName="";
+userBirth="";
+userPhone="";
+
+renderStart();
+
+}
+
+document.addEventListener("input",e=>{
+
+if(e.target.id==="birth"){
+let value=e.target.value.replace(/\D/g,"").slice(0,8);
+if(value.length>=5){ value=value.replace(/(\d{4})(\d{2})(\d{0,2})/,"$1.$2.$3"); }
+else if(value.length>=3){ value=value.replace(/(\d{4})(\d{0,2})/,"$1.$2"); }
+e.target.value=value;
+}
+
+if(e.target.id==="phone"){
+
+let value=e.target.value.replace(/\D/g,'');
+
+if(value.length>11){
+value=value.slice(0,11);
+}
+
+if(value.length>=8){
+value=value.replace(
+/(\d{3})(\d{4})(\d+)/,
+"$1-$2-$3"
+);
+}else if(value.length>=4){
+value=value.replace(
+/(\d{3})(\d+)/,
+"$1-$2"
+);
+}
+
+e.target.value=value;
+
+}
+
+});
+
+renderStart();
+
+</script>
+
 </body>
 </html>
