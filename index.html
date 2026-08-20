@@ -28,14 +28,15 @@ color:#555;
 }
 
 .container{
-max-width:500px;
-margin:auto;
-padding:60px 18px 30px;
-min-height:100vh;
-display:flex;
-align-items:center;
+  max-width:500px;
+  margin:auto;
+  padding:0 18px;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
-
+  
 .card{
 width:100%;
 background:#fff;
@@ -681,29 +682,26 @@ body:formData
 });
 
 app.innerHTML=`
-
 <div class="card hero">
+  <h2>예약 신청 완료</h2>
 
-<h2>예약 신청 완료</h2>
+  <br>
 
-<br>
+  <p>
+    시향 예약 정보가 전송되었습니다.
+  </p>
 
-<p>
-시향 예약 정보가 전송되었습니다.
-</p>
+  <br>
 
-<br>
+  <h3>Remake_23</h3>
 
-<h3>Remake_23</h3>
-
-<div class="thanks">
-참여해주셔서 감사합니다.<br>
-당신에게 어울리는 향을 직접 만나보세요.
+  <div class="thanks">
+    참여해주셔서 감사합니다.<br>
+    당신에게 어울리는 향을 직접 만나보세요.
+  </div>
 </div>
-
-</div>
-
 `;
+
 
 }catch(error){
 
